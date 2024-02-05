@@ -34,7 +34,8 @@ export default defineConfig(({ mode, command }) => {
       proxy: {
         // https://cn.vitejs.dev/config/#server-proxy
         '/api': {
-          target: 'http://124.221.92.224:3001',
+          target: 'http://localhost:3001',
+          // target: 'http://124.221.92.224:3001',
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/api/, '')
         },

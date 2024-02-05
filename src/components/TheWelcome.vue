@@ -1,88 +1,71 @@
-<script setup lang="ts">
-import WelcomeItem from './WelcomeItem.vue'
-import DocumentationIcon from './icons/IconDocumentation.vue'
-import ToolingIcon from './icons/IconTooling.vue'
-import EcosystemIcon from './icons/IconEcosystem.vue'
-import CommunityIcon from './icons/IconCommunity.vue'
-import SupportIcon from './icons/IconSupport.vue'
+<template>
+  <el-table-v2
+    :columns="columns"
+    :data="tableData"
+    :fixed-data="fixedData"
+    :width="1000"
+    :height="400"
+    :row-class="rowClass"
+    fixed
+    @scroll="onScroll"
+  />
+</template>
+
+<script lang="ts" setup>
+import { computed, ref, onMounted } from 'vue'
+import { getStudentList } from '../api/test/student'
+import { parseTime } from '../utils/common.js'
+
+onMounted(() => {
+  getTableData()
+})
+const columns = [
+{ key: 'id', title: '', dataKey: 'id',width: 70},
+{ key: 'name', title: 'Username', dataKey: 'name', width: 100},
+{ key: 'user', title: 'UserId', dataKey: 'user', width: 100},
+{ key: 'sex', title: 'Sex', dataKey: 'sex', width: 100},
+{ key: 'desc', title: 'Desc', dataKey: 'desc', width: 450},
+{ key: 'createDate', title: 'createTime', dataKey: 'createDate', width: 150}
+]
+
+const rowClass = ({ rowIndex }) => {
+  if (rowIndex < 0 || (rowIndex + 1) % 5 === 0) return 'sticky-row'
+}
+
+const data = ref([])
+const stickyIndex = ref(0)
+
+const fixedData = computed(() => data.value.slice(stickyIndex.value, stickyIndex.value + 1))
+const tableData = computed(() => {
+  return data.value.slice(1)
+})
+
+const onScroll = ({ scrollTop }) => {
+  stickyIndex.value = Math.floor(scrollTop / 250) * 5
+}
+const getTableData = () => {
+  getStudentList().then((res) => {
+    if (res.code == 0) {
+      data.value = res.data.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          user: item.user,
+          sex: item.sex == 0 ? 'male' : 'female',
+          desc: item.desc,
+          createDate: parseTime(item.createDate)
+        }
+      })
+    } else {
+      data.value = []
+    }
+  })
+}
 </script>
 
-<template>
-  <WelcomeItem>
-    <template #icon>
-      <DocumentationIcon />
-    </template>
-    <template #heading>Documentation</template>
-
-    Vue’s
-    <a href="https://vuejs.org/" target="_blank" rel="noopener">official documentation</a>
-    provides you with all information you need to get started.
-  </WelcomeItem>
-
-  <WelcomeItem>
-    <template #icon>
-      <ToolingIcon />
-    </template>
-    <template #heading>Tooling</template>
-
-    This project is served and bundled with
-    <a href="https://vitejs.dev/guide/features.html" target="_blank" rel="noopener">Vite</a>. The
-    recommended IDE setup is
-    <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VSCode</a> +
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank" rel="noopener">Volar</a>. If
-    you need to test your components and web pages, check out
-    <a href="https://www.cypress.io/" target="_blank" rel="noopener">Cypress</a> and
-    <a href="https://on.cypress.io/component" target="_blank" rel="noopener"
-      >Cypress Component Testing</a
-    >.
-
-    <br />
-
-    More instructions are available in <code>README.md</code>.
-  </WelcomeItem>
-
-  <WelcomeItem>
-    <template #icon>
-      <EcosystemIcon />
-    </template>
-    <template #heading>Ecosystem</template>
-
-    Get official tools and libraries for your project:
-    <a href="https://pinia.vuejs.org/" target="_blank" rel="noopener">Pinia</a>,
-    <a href="https://router.vuejs.org/" target="_blank" rel="noopener">Vue Router</a>,
-    <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener">Vue Test Utils</a>, and
-    <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener">Vue Dev Tools</a>. If
-    you need more resources, we suggest paying
-    <a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">Awesome Vue</a>
-    a visit.
-  </WelcomeItem>
-
-  <WelcomeItem>
-    <template #icon>
-      <CommunityIcon />
-    </template>
-    <template #heading>Community</template>
-
-    Got stuck? Ask your question on
-    <a href="https://chat.vuejs.org" target="_blank" rel="noopener">Vue Land</a>, our official
-    Discord server, or
-    <a href="https://stackoverflow.com/questions/tagged/vue.js" target="_blank" rel="noopener"
-      >StackOverflow</a
-    >. You should also subscribe to
-    <a href="https://news.vuejs.org" target="_blank" rel="noopener">our mailing list</a> and follow
-    the official
-    <a href="https://twitter.com/vuejs" target="_blank" rel="noopener">@vuejs</a>
-    twitter account for latest news in the Vue world.
-  </WelcomeItem>
-
-  <WelcomeItem>
-    <template #icon>
-      <SupportIcon />
-    </template>
-    <template #heading>Support Vue</template>
-
-    As an independent project, Vue relies on community backing for its sustainability. You can help
-    us by
-    <a href="https://vuejs.org/sponsor/" target="_blank" rel="noopener">becoming a sponsor</a>.
-  </WelcomeItem>
-</template>
+<style>
+.el-el-table-v2__fixed-header-row {
+  background-color: var(--el-color-primary-light-5);
+  font-weight: bold;
+}
+</style>
