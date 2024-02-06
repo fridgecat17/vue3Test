@@ -9,11 +9,12 @@ export const whoAreYou = (data) => {
     params: data
   })
 }
-export const getStudentList = () => {
+export const getStudentList = (data) => {
   return request({
     url: '/students/getStudentList',
     method: 'get',
     headers: { isToken: false },
+    params: data
   })
 }
 
