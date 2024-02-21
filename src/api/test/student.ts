@@ -26,3 +26,11 @@ export const setStudent = (data) => {
   })
 }
 
+export const updateStudent = (data, id) => {
+  return request({
+    url: '/students/' + id,
+    method: 'post',
+    data: data
+  })
+}
+
