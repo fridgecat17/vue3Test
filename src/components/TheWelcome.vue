@@ -25,13 +25,14 @@
 </template>
 
 <script lang="tsx" setup>
-import { computed, ref } from 'vue'
-import { getStudentList, updateStudent } from '../api/test/student'
+import { computed, ref, getCurrentInstance } from 'vue'
+import { getStudentList, updateStudent, removeStudent } from '../api/test/student'
 import { parseTime } from '../utils/common.js'
 
-import { ElInput } from 'element-plus'
+import { ElButton, ElInput } from 'element-plus'
 import type { FunctionalComponent } from 'vue'
 import type { InputInstance } from 'element-plus'
+const { proxy } = getCurrentInstance()
 type SelectionCellProps = {
   value: string
   intermediate?: boolean
@@ -47,21 +48,41 @@ const columns = [
   { key: 'name', title: 'Username', dataKey: 'name', width: 150 },
   { key: 'user', title: 'UserId', dataKey: 'user', width: 120 },
   { key: 'sex', title: 'Sex', dataKey: 'sex', width: 100 },
-  { key: 'desc', title: 'Desc', dataKey: 'desc', width: 450 },
-  { key: 'createDate', title: 'CreateTime', dataKey: 'createDate', width: 150 }
+  { key: 'desc', title: 'Desc', dataKey: 'desc', width: 400 },
+  { key: 'createDate', title: 'CreateTime', dataKey: 'createDate', width: 150 },
+  { key: 'Operations', title: ' ', dataKey: 'Operations', width: 70, align: 'center',
+    cellRenderer: ({ rowData }) => {
+      const onClick = () => {
+        removeStudent(rowData.id).then(res => {
+          if (res.code == 0) {
+            proxy.$modal.msgSuccess('删除成功')
+            getTableData()
+          }
+        })
+      }
+      return ( <ElButton size="small" type="danger" icon={'Delete'} onClick={onClick}/>
+      )
+    }
+  },
 ]
 
 columns.forEach(item => {
-  if (item.dataKey !== 'createDate') {
+  if (!['createDate', 'Operations'].includes(item.dataKey)) {
     item[`${item.dataKey}Editing`] = false
+    item[`${item.dataKey}Change`] = false
     item['cellRenderer'] = ({ rowData, column }) => {
       const onChange = (value: string) => {
+        rowData[`${column.dataKey}Change`] = true
         rowData[column.dataKey!] = value
       }
       const onEnterEditMode = () => {
         rowData[`${column.dataKey}Editing`] = true
       }
       const onExitEditMode = () => {
+        if (!rowData[`${column.dataKey}Change`]) {
+          rowData[`${column.dataKey}Editing`] = false
+          return
+        }
         // 失焦后修改信息
         const query = {
           name: rowData.name,
@@ -70,6 +91,7 @@ columns.forEach(item => {
           desc: rowData.desc
         }
         updateStudent(query, rowData.id).then(() => {
+          rowData[`${column.dataKey}Change`] = false
           rowData[`${column.dataKey}Editing`] = false
         })
       }
@@ -80,15 +102,36 @@ columns.forEach(item => {
           el.focus?.()
         }
       }
-      return rowData[`${column.dataKey}Editing`] ? (
-        <InputCell
-          forwardRef={setRef}
-          value={rowData[column.dataKey!]}
+      return rowData[`${column.dataKey}Editing`] ? (column.dataKey == 'sex' ? (
+        <el-select
+          v-model={rowData[column.dataKey!]}
+          ref={setRef}
           onChange={onChange}
           onBlur={onExitEditMode}
           onKeydownEnter={onExitEditMode}
-        />
+          automatic-dropdown={true}
+          size="small"
+          style="width: 100%"
+        >
+          <el-option
+            label="male"
+            value={'male'}
+          />
+          <el-option
+            label="female"
+            value={'female'}
+          />
+        </el-select>
       ) : (
+          <InputCell
+            forwardRef={setRef}
+            value={rowData[column.dataKey!]}
+            onChange={onChange}
+            onBlur={onExitEditMode}
+            onKeydownEnter={onExitEditMode}
+          />
+          )
+        ) : (
         <div class="table-v2-inline-editing-trigger" onClick={onEnterEditMode}>
           {rowData[column.dataKey!] || '--'}
         </div>

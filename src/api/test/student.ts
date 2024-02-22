@@ -34,3 +34,10 @@ export const updateStudent = (data, id) => {
   })
 }
 
+export const removeStudent = (id) => {
+  return request({
+    url: '/students/' + id,
+    method: 'delete'
+  })
+}
+
