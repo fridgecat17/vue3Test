@@ -1,14 +1,5 @@
 import request from '@/utils/request'
 
-// 获取user对象
-export const whoAreYou = (data) => {
-  return request({
-    url: '/students/who-are-you',
-    method: 'get',
-    headers: { isToken: false },
-    params: data
-  })
-}
 export const getStudentList = (data) => {
   return request({
     url: '/students/getStudentList',
@@ -40,4 +31,3 @@ export const removeStudent = (id) => {
     method: 'delete'
   })
 }
-

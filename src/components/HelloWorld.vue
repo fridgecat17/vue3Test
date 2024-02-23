@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import { whoAreYou } from '../api/test/student';
 defineProps<{
   msg: string
 }>()
-function testGet(user?:String, name?:String) {
-  whoAreYou({ name: name, user: user }).then(() => {
-  })
-}
-testGet('maqqqqq', 'moququu')
 </script>
 
 <template>

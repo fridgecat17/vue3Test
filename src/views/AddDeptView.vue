@@ -4,24 +4,27 @@
       ref="ruleFormRef"
       :model="ruleForm"
       :rules="rules"
-      label-width="120px"
+      label-width="170px"
       :size="formSize"
       status-icon
     >
-      <el-form-item label="Student Name" prop="name">
+      <el-form-item label="Department Name" prop="name">
         <el-input v-model="ruleForm.name" />
       </el-form-item>
-      <el-form-item label="Student User" prop="user">
-        <el-input v-model="ruleForm.user" />
-      </el-form-item>
-      <el-form-item label="Student Sex" prop="sex">
-        <el-radio-group v-model="ruleForm.sex">
-          <el-radio label="male" />
-          <el-radio label="female" />
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="Student desc" prop="desc">
-        <el-input v-model="ruleForm.desc" type="textarea" />
+      <el-form-item label="Users" prop="desc">
+        <el-select
+          v-model="ruleForm.Users"
+          multiple
+          placeholder="Select"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in userList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
@@ -34,46 +37,51 @@
 import { reactive, ref, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router';
 import type { FormInstance, FormRules } from 'element-plus'
-import { setStudent } from '../api/test/student'
+import { getStudentList } from '../api/test/student'
+import { setClass } from '../api/test/class'
 const router = useRouter();
 interface RuleForm {
   name: string
-  user: string
-  sex: string
-  desc: string
+  Users: number[]
 }
 const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
 const { proxy } = getCurrentInstance()
 const ruleForm = reactive<RuleForm>({
   name: '',
-  user: '',
-  sex: 'female',
-  desc: ''
+  Users: []
 })
 
 const rules = reactive<FormRules<RuleForm>>({
-  name: [
-    { required: true, message: 'Please input Student name', trigger: 'blur' },
-    { min: 3, max: 15, message: 'Length should be 3 to 15', trigger: 'blur' }
-  ],
-  user: [{ required: true, message: 'Please input Student userId', trigger: 'blur' }]
+  name: [{ required: true, message: 'Please input Department name', trigger: 'blur' }]
 })
-
+const userList = ref([])
+const getTableData = () => {
+  getStudentList({
+    name: '',
+    user: '',
+    pageType: 0
+  }).then((res) => {
+    if (res.code == 0) {
+      userList.value = res.data.list
+    } else {
+      userList.value = []
+    }
+  })
+}
+getTableData()
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
       const query = {
         name: ruleForm.name,
-        user: ruleForm.user,
-        sex: ruleForm.sex == 'male' ? 0 : 1,
-        desc: ruleForm.desc
+        userIds: ruleForm.Users
       }
-      setStudent(query).then((res) => {
+      setClass(query).then((res) => {
         if (res.code == 0) {
           proxy.$modal.msgSuccess('创建成功')
-          router.push({ path:"/" });
+          router.push({ path:"/deptList" });
         }
       })
     }
