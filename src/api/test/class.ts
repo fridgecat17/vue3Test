@@ -15,3 +15,18 @@ export const getClassList = (data) => {
     params: data
   })
 }
+
+export const updateClass = (data, id) => {
+  return request({
+    url: '/class/' + id,
+    method: 'post',
+    data: data
+  })
+}
+
+export const removeClass = (id) => {
+  return request({
+    url: '/class/' + id,
+    method: 'delete'
+  })
+}

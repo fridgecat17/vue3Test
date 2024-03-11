@@ -26,10 +26,9 @@
 
 <script lang="tsx" setup>
 import { computed, ref, getCurrentInstance } from 'vue'
-import { updateStudent, removeStudent } from '../api/test/student'
-import { getClassList } from '../api/test/class'
+import { getClassList, updateClass, removeClass } from '../api/test/class'
 import { parseTime } from '../utils/common.js'
-
+import { getStudentList } from '../api/test/student'
 import { ElButton, ElInput } from 'element-plus'
 import type { FunctionalComponent } from 'vue'
 import type { InputInstance } from 'element-plus'
@@ -44,35 +43,57 @@ type SelectionCellProps = {
 const InputCell: FunctionalComponent<SelectionCellProps> = ({ value, onChange, forwardRef }) => {
   return <ElInput ref={forwardRef as any} onInput={onChange} modelValue={value} />
 }
-
+const userList = ref([])
+const getUserData = () => {
+  getStudentList({
+    name: '',
+    user: '',
+    pageType: 0
+  }).then((res) => {
+    if (res.code == 0) {
+      userList.value = res.data.list
+    } else {
+      userList.value = []
+    }
+  })
+}
+getUserData()
 const columns = [
   { key: 'name', title: 'DeptName', dataKey: 'name', width: 150 },
-  { key: 'students', title: 'Uers', dataKey: 'students', width: 600 },
+  { key: 'studentsLabel', title: 'Uers', dataKey: 'studentsLabel', width: 600 },
   { key: 'createDate', title: 'CreateTime', dataKey: 'createDate', width: 150 },
-  { key: 'Operations', title: ' ', dataKey: 'Operations', width: 90, align: 'center',
+  {
+    key: 'Operations',
+    title: ' ',
+    dataKey: 'Operations',
+    width: 90,
+    align: 'center',
     cellRenderer: ({ rowData }) => {
       const onClick = () => {
-        removeStudent(rowData.id).then(res => {
+        removeClass(rowData.id).then((res) => {
           if (res.code == 0) {
             proxy.$modal.msgSuccess('删除成功')
             getTableData()
           }
         })
       }
-      return ( <ElButton size="small" type="danger" icon={'Delete'} onClick={onClick}/>
-      )
+      return <ElButton size="small" type="danger" icon={'Delete'} onClick={onClick} />
     }
-  },
+  }
 ]
 
-columns.forEach(item => {
+columns.forEach((item) => {
   if (!['createDate', 'Operations'].includes(item.dataKey)) {
     item[`${item.dataKey}Editing`] = false
     item[`${item.dataKey}Change`] = false
     item['cellRenderer'] = ({ rowData, column }) => {
       const onChange = (value: string) => {
         rowData[`${column.dataKey}Change`] = true
-        rowData[column.dataKey!] = value
+        if (column.dataKey !== 'studentsLabel') {
+          rowData[column.dataKey!] = value
+        } else {
+          rowData.studentsIds = value
+        }
       }
       const onEnterEditMode = () => {
         rowData[`${column.dataKey}Editing`] = true
@@ -85,13 +106,12 @@ columns.forEach(item => {
         // 失焦后修改信息
         const query = {
           name: rowData.name,
-          user: rowData.user,
-          sex: rowData.sex == 'male' ? 0 : 1,
-          desc: rowData.desc
+          userIds: rowData.studentsIds
         }
-        updateStudent(query, rowData.id).then(() => {
+        updateClass(query, rowData.id).then(() => {
           rowData[`${column.dataKey}Change`] = false
           rowData[`${column.dataKey}Editing`] = false
+          // getTableData()
         })
       }
       const input = ref()
@@ -101,27 +121,23 @@ columns.forEach(item => {
           el.focus?.()
         }
       }
-      return rowData[`${column.dataKey}Editing`] ? (column.dataKey == 'sex' ? (
-        <el-select
-          v-model={rowData[column.dataKey!]}
-          ref={setRef}
-          onChange={onChange}
-          onBlur={onExitEditMode}
-          onKeydownEnter={onExitEditMode}
-          automatic-dropdown={true}
-          size="small"
-          style="width: 100%"
-        >
-          <el-option
-            label="male"
-            value={'male'}
-          />
-          <el-option
-            label="female"
-            value={'female'}
-          />
-        </el-select>
-      ) : (
+      return rowData[`${column.dataKey}Editing`] ? (
+        column.dataKey == 'studentsLabel' ? (
+          <el-select
+            v-model={rowData.studentsIds}
+            ref={setRef}
+            onChange={onChange}
+            onBlur={onExitEditMode}
+            onKeydownEnter={onExitEditMode}
+            automatic-dropdown={true}
+            multiple
+            style="width: 100%"
+          >
+            {userList.value.map((item) => {
+              return <el-option key={item.id} label={item.name} value={item.id} />
+            })}
+          </el-select>
+        ) : (
           <InputCell
             forwardRef={setRef}
             value={rowData[column.dataKey!]}
@@ -129,8 +145,8 @@ columns.forEach(item => {
             onBlur={onExitEditMode}
             onKeydownEnter={onExitEditMode}
           />
-          )
-        ) : (
+        )
+      ) : (
         <div class="table-v2-inline-editing-trigger" onClick={onEnterEditMode}>
           {rowData[column.dataKey!] || '--'}
         </div>
@@ -176,7 +192,9 @@ const getTableData = () => {
         return {
           id: item.id,
           name: item.className,
-          students: item.students.map(user => user.name).join('、'),
+          students: item.students,
+          studentsLabel: item.students.map((user) => user.name).join('、'),
+          studentsIds: item.students.map((user) => user.id),
           createDate: parseTime(item.createDate)
         }
       })
