@@ -17,6 +17,8 @@ import {
   DoubleSide,
   BoxGeometry,
   SphereGeometry,
+  Vector2,
+  Raycaster,
   SpotLight,
   PointLight,
   AmbientLight
@@ -41,7 +43,15 @@ export default defineComponent({
       const axes = new AxesHelper(20)
       scene.add(axes)
 
-      const renderer = new WebGLRenderer({ antialias: true })
+      const renderer = new WebGLRenderer({
+        logarithmicDepthBuffer: true,
+        antialias: true, // true/false表示是否开启反锯齿
+        alpha: true, // true/false 表示是否可以设置背景色透明
+        precision: 'mediump', // highp/mediump/lowp 表示着色精度选择
+        premultipliedAlpha: true // true/false 表示是否可以设置像素深度（用来度量图像的分辨率）
+        // preserveDrawingBuffer: false, // true/false 表示是否保存绘图缓冲
+        // physicallyCorrectLights: true, // true/false 表示是否开启物理光照
+      })
       renderer.setClearColor(new Color(0xeeeeee))
       renderer.setSize(1000, 400)
 
@@ -60,15 +70,20 @@ export default defineComponent({
       const cubeGeometry = new BoxGeometry(4, 4, 4)
       const cubeMaterial = new MeshLambertMaterial({ color: 0xff0000 })
       const cube = new Mesh(cubeGeometry, cubeMaterial)
+      cube.name = 'cube-box'
       //cube.rotation.x=-0.5*Math.PI
 
       // 三角形几何体
-      const coneGeometry = new ConeGeometry(5, 10, 30, 10, false, 0, 300 * Math.PI / 180)
+      const coneGeometry = new ConeGeometry(5, 10, 30)
       const conerMaterial = new MeshLambertMaterial({
-        'color': 'orange',
-        'side': DoubleSide
+        color: 'orange',
+        side: DoubleSide
       })
       const coneMesh = new Mesh(coneGeometry, conerMaterial)
+      coneMesh.position.x = 0
+      coneMesh.position.y = 0
+      coneMesh.position.z = 0
+      coneMesh.name = 'coneMe'
       scene.add(coneMesh)
 
       //开启阴影
@@ -86,6 +101,7 @@ export default defineComponent({
       sphere.position.x = 2
       sphere.position.y = 2
       sphere.position.z = 2
+      sphere.name = 'ball'
       scene.add(sphere)
       //光源效果 点光源
       let spotLight = new PointLight(0xffffff, 1)
@@ -122,6 +138,32 @@ export default defineComponent({
       //   renderer.render(scene, camera);
       // })
 
+      let intersects = [] //几何体合集
+      let geometrys = [] //几何体合集
+      const pointer = new Vector2()
+      document.addEventListener('click', meshOnClick)
+      let raycaster = new Raycaster()
+      function meshOnClick(event) {
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1
+        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1
+        raycaster.setFromCamera(pointer, camera)
+        geometrys = []
+        //geometrys为需要监听的Mesh合集，可以通过这个集合来过滤掉不需要监听的元素例如地面天空
+        scene.traverse((e) => {
+          if (e instanceof Mesh && e != plane) {
+            geometrys.push(e)
+          }
+        })
+        //true为不拾取子对象
+        intersects = raycaster.intersectObjects(geometrys, true)
+        //被射线穿过的几何体为一个集合，越排在前面说明其位置离端点越近，所以直接取[0]
+        if (intersects.length > 0) {
+          //alert(intersects[0].object.name);
+          console.log(intersects[0].object)
+        } else {
+          //若没有几何体被监听到，可以做一些取消操作
+        }
+      }
       // 通过wsad控制物体移动
       // 监听键盘是否按下
       let keyCodeW = false
@@ -174,7 +216,7 @@ export default defineComponent({
               keyCodeD = false
               break
             case 32:
-            keyJump = false
+              keyJump = false
               break
             default:
               break
@@ -182,7 +224,6 @@ export default defineComponent({
         },
         false
       )
-      let gap = 0
       // 控制 移动
       function onCodeMove(mesh) {
         if (keyCodeW) {
@@ -211,8 +252,17 @@ export default defineComponent({
         }
 
         if (keyJump) {
-          gap += 0.02
-          mesh.position.y = 2 + 10 * Math.abs(Math.cos(gap))
+          if (timer1) {
+            // clearTimeout(timer1)
+          } else {
+            mesh.position.y += 5
+            camera.position.y += 5
+            timer1 = setTimeout(() => {
+              mesh.position.y = 0
+              camera.position.y = 10
+              timer1 = null
+            }, 100)
+          }
         }
 
         if (keyCodeW && keyCodeD) {
