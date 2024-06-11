@@ -77,7 +77,7 @@ const columns = [
           }
         })
       }
-      return <ElButton size="small" type="danger" icon={'Delete'} onClick={onClick} />
+      return <ElButton size="small" type="danger" icon={'Delete'} onClick={onClick}></ElButton>
     }
   }
 ]

@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
   <header>
     <div class="wrapper">
-      <HelloWorld msg="Welcome!" />
       <nav>
         <RouterLink to="/">USERLIST</RouterLink>
         <RouterLink to="/about">CREATEUSER</RouterLink>
         <RouterLink to="/deptList">DEPTLIST</RouterLink>
         <RouterLink to="/addDept">CREATEDEPT</RouterLink>
         <RouterLink to="/map">MAP</RouterLink>
+        <RouterLink to="/game">GAME</RouterLink>
       </nav>
     </div>
   </header>
@@ -57,6 +56,7 @@ nav a:first-of-type {
     padding-right: calc(var(--section-gap) / 2);
   }
   header .wrapper {
+    width: 100%;
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;

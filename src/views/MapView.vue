@@ -106,11 +106,8 @@ export default defineComponent({
       //光源效果 点光源
       let spotLight = new PointLight(0xffffff, 1)
       spotLight.position.set(-10, 30, -10)
-      spotLight.target = sphere
-      ;(spotLight.shadow.camera.near = 1),
-        (spotLight.shadow.camera.far = 5000),
-        //开启阴影
-        (spotLight.castShadow = true)
+      spotLight.shadow.camera.near = 1
+      spotLight.shadow.camera.far = 5000
       scene.add(spotLight)
       const ambientLight = new AmbientLight(0xffffff)
       scene.add(ambientLight)
