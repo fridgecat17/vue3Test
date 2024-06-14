@@ -4,7 +4,7 @@ export const getStudentList = (data) => {
   return request({
     url: '/students/getStudentList',
     method: 'get',
-    headers: { isToken: false },
+    headers: { isToken: true },
     params: data
   })
 }

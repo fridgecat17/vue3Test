@@ -1,24 +1,23 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <header>
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">USERLIST</RouterLink>
-        <RouterLink to="/about">CREATEUSER</RouterLink>
-        <RouterLink to="/deptList">DEPTLIST</RouterLink>
-        <RouterLink to="/addDept">CREATEDEPT</RouterLink>
-        <RouterLink to="/map">MAP</RouterLink>
-        <RouterLink to="/game">GAME</RouterLink>
+        <RouterLink v-for="nav in navList" :key="nav.name" :to="nav">{{ nav.meta.title }}</RouterLink>
       </nav>
     </div>
   </header>
 
   <RouterView />
 </template>
-
+<script lang="ts" setup>
+import { RouterLink, RouterView } from 'vue-router'
+import { PublicStore } from '@/stores/Public';
+const stores = PublicStore()
+const routerList = stores.navList
+const navList = routerList.filter(route => {
+  return route.meta ? route.meta.title : false
+})
+</script>
 <style scoped>
 header {
   line-height: 1.5;

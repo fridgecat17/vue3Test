@@ -23,10 +23,11 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(config => {
   // 是否需要设置 token
-  const isToken = (config.headers || {}).isToken === false
+  const isToken = (config.headers || {}).isToken
   // 是否需要防止数据重复提交
   const isRepeatSubmit = (config.headers || {}).repeatSubmit === false
-  if (getToken() && !isToken) {
+  console.log(getToken())
+  if (getToken() && isToken) {
     config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
   }
   // get请求映射params参数
@@ -108,13 +109,16 @@ service.interceptors.response.use(res => {
     }
   },
   error => {
-    console.log('err' + error)
+    console.log(error)
     let { message } = error;
     if (message == "Network Error") {
       message = "后端接口连接异常";
     } else if (message.includes("timeout")) {
       message = "系统接口请求超时";
-    } else if (message.includes("Request failed with status code")) {
+    } else if (error.response.data) {
+      message = error.response.data.message
+    }
+     else if (message.includes("Request failed with status code")) {
       message = "系统接口" + message.substr(message.length - 3) + "异常";
     }
     ElMessage({ message: message, type: 'error', duration: 5 * 1000 })

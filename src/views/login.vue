@@ -8,71 +8,58 @@
       :size="formSize"
       status-icon
     >
-      <el-form-item label="Student Name" prop="name">
-        <el-input v-model="ruleForm.name" />
+      <el-form-item label="username" prop="username">
+        <el-input v-model="ruleForm.username" />
       </el-form-item>
-      <el-form-item label="Student User" prop="user">
-        <el-input v-model="ruleForm.user" />
-      </el-form-item>
-      <el-form-item label="Student Sex" prop="sex">
-        <el-radio-group v-model="ruleForm.sex">
-          <el-radio label="male" />
-          <el-radio label="female" />
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="Student desc" prop="desc">
-        <el-input v-model="ruleForm.desc" type="textarea" />
+      <el-form-item label="password" prop="password">
+        <el-input v-model="ruleForm.password" show-password/>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef,1)"> Login </el-button>
+        <el-button @click="submitForm(ruleFormRef,2)"> Register </el-button>
         <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, getCurrentInstance } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router';
 import type { FormInstance, FormRules } from 'element-plus'
-import { setStudent } from '../api/test/student'
+import { userLogin, register } from '../api/test/auth'
+import { setToken } from '../utils/auth'
 const router = useRouter();
 interface RuleForm {
-  name: string
-  user: string
-  sex: string
-  desc: string
+  username: string | number,
+  password: string | number
 }
 const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
-const { proxy } = getCurrentInstance()
 const ruleForm = reactive<RuleForm>({
-  name: '',
-  user: '',
-  sex: 'female',
-  desc: ''
+  username: '',
+  password: ''
 })
 
 const rules = reactive<FormRules<RuleForm>>({
-  name: [
-    { required: true, message: 'Please input Student name', trigger: 'blur' },
-    { min: 3, max: 15, message: 'Length should be 3 to 15', trigger: 'blur' }
-  ],
-  user: [{ required: true, message: 'Please input Student userId', trigger: 'blur' }]
+  username: [{ required: true, message: 'Please input username', trigger: 'blur' }],
+  password: [
+    { required: true, message: 'Please input password', trigger: 'blur' },
+    { min: 6, max: 18, message: 'Length should be 6 to 18', trigger: 'blur' }
+  ]
 })
 
-const submitForm = async (formEl: FormInstance | undefined) => {
+const submitForm = async (formEl: FormInstance | undefined, type: number) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
       const query = {
-        name: ruleForm.name,
-        user: ruleForm.user,
-        sex: ruleForm.sex == 'male' ? 0 : 1,
-        desc: ruleForm.desc
+        username: ruleForm.username,
+        password: ruleForm.password
       }
-      setStudent(query).then((res) => {
+      const request = type == 1 ? userLogin : register
+      request(query).then((res) => {
         if (res.code == 0) {
-          proxy.$modal.msgSuccess('创建成功')
+          setToken(res.data.token)
           router.push({ path:"/" });
         }
       })
