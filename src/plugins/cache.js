@@ -25,6 +25,8 @@ const sessionCache = {
     const value = this.get(key)
     if (value != null) {
       return JSON.parse(value)
+    } else {
+      return null
     }
   },
   remove (key) {

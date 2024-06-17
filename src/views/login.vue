@@ -29,7 +29,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { userLogin, register } from '../api/test/auth'
 import { setToken } from '../utils/auth'
 const router = useRouter();
-interface RuleForm {
+type RuleForm = {
   username: string | number,
   password: string | number
 }

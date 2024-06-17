@@ -1,8 +1,8 @@
 <template>
   <header>
     <div class="wrapper">
-      <nav>
-        <RouterLink v-for="nav in navList" :key="nav.name" :to="nav">{{ nav.meta.title }}</RouterLink>
+      <nav v-if="navList.length > 0">
+        <RouterLink v-for="nav in navList" :key="nav.path" :to="nav.path">{{ nav.meta.title }}</RouterLink>
       </nav>
     </div>
   </header>
@@ -11,11 +11,13 @@
 </template>
 <script lang="ts" setup>
 import { RouterLink, RouterView } from 'vue-router'
-import { PublicStore } from '@/stores/Public';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { PublicStore } from './stores/Public';
 const stores = PublicStore()
-const routerList = stores.navList
-const navList = routerList.filter(route => {
-  return route.meta ? route.meta.title : false
+const navList = computed(() => {
+  return stores.navList.filter(route => {
+    return route.meta ? route.meta.title : false
+  })
 })
 </script>
 <style scoped>

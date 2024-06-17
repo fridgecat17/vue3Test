@@ -87,23 +87,36 @@ router.beforeEach(async(to, from, next) => {
   if (to.path !== '/login' && !getToken()) { // 判断是否登录  非`login`页面无`token`的话跳转到登录页面
       next({ path: '/login' });
   } else {
-      const stores = PublicStore() // pinia 状态管理
-      if (to.path !== '/login' && stores.power.length === 0) { // 判断是否获取过权限
-          const res = await stores.setPower() // 获取权限列表
-          if (res) {
-              getRoutesAuth(stores.power) // 根据权限列表挂载路由
-              if (stores.navList.length === 0) {
-                stores.setNav(router.getRoutes())
-              }
-              next({ path: to.fullPath }) // 跳转页面
-          } else { // 获取权限失败返回到来源页面
-              next({ path: from.path, query: { hasPower: 1 } })
+    const stores = PublicStore() // pinia 状态管理
+    if (to.path !== '/login') {
+      if (stores.power.length === 0) {
+        // 判断是否获取过权限
+        const res = await stores.setPower() // 获取权限列表
+        if (res) {
+          getRoutesAuth(stores.power) // 根据权限列表挂载路由
+          if (stores.navList.length === 0) {
+            stores.setNav(router.getRoutes())
           }
-      } else if (router.hasRoute(to.name)) { // 判断路由是否存在
-          next()
-      } else { // 路由不存在返回原页面
+          next({...to, replace: true}) // 跳转页面
+        } else { // 获取权限失败返回到来源页面
           next({ path: from.path, query: { hasPower: 1 } })
+        }
+      } else {
+        getRoutesAuth(stores.power) // 根据权限列表挂载路由
+        if (stores.navList.length === 0) {
+          stores.setNav(router.getRoutes())
+          next({...to, replace: true}) // 跳转页面
+        } else {
+          if (to.name) {
+            if (router.hasRoute(to.name)) {
+              next()
+            }
+          } else {
+            next({...to, replace: true}) // 跳转页面
+          }
+        }
       }
+    }
   }
 })
 export default router
