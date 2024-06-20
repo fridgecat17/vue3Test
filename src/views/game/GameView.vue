@@ -133,16 +133,16 @@ function listen() {
     (e) => {
       var ev = e || window.event
       switch (ev.keyCode) {
-        case 87:
+        case 87: case 38:
           keyCodeW = true
           break
-        case 83:
+        case 83: case 40:
           keyCodeS = true
           break
-        case 65:
+        case 65: case 37:
           keyCodeA = true
           break
-        case 68:
+        case 68: case 39:
           keyCodeD = true
           break
         default:
@@ -156,16 +156,16 @@ function listen() {
     (e) => {
       var ev = e || window.event
       switch (ev.keyCode) {
-        case 87:
+        case 87: case 38:
           keyCodeW = false
           break
-        case 83:
+        case 83: case 40:
           keyCodeS = false
           break
-        case 65:
+        case 65: case 37:
           keyCodeA = false
           break
-        case 68:
+        case 68: case 39:
           keyCodeD = false
           break
         default:

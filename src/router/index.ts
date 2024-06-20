@@ -49,14 +49,14 @@ const routesList: RouteRecordRaw[] = [
     },
     component: () => import('../views/game/GameView.vue')
   },
-  // {
-  //   path: '/map',
-  //   name: 'map',
-  //   meta: {
-  //     title:'MAP',
-  //   },
-  //   component: () => import('../views/MapView.vue')
-  // },
+  {
+    path: '/map',
+    name: 'map',
+    meta: {
+      title:'MAP',
+    },
+    component: () => import('../views/MapView.vue')
+  },
   // {
   //   path: '/vr',
   //   name: 'vr',
@@ -69,7 +69,7 @@ const routesList: RouteRecordRaw[] = [
 const routes:Array<RouteRecordRaw> = routesList.filter((i) => { // 过滤掉需要权限认证的路由
   return i.meta ? i.meta.noAauth : false;
 });
-const router:Array<RouteRecordRaw> = createRouter({ // 挂载不需要权限认证的路由
+const router = createRouter({ // 挂载不需要权限认证的路由
   history: createWebHistory(),
   routes,
 });
@@ -78,7 +78,7 @@ const getRoutesAuth = (power:Array<string>) => { // 添加路由
       return !i.meta || !i.meta.noAauth
   })
   powerList.forEach(e => {
-      if (power === 1 || power.includes(e.path)) { //power(1)表示管理员权限全部挂载  判断权限列表是否包含当前路由 包含则挂载
+      if (power.includes('admin') || power.includes(e.path)) { //power(1)表示管理员权限全部挂载  判断权限列表是否包含当前路由 包含则挂载
         router.addRoute(e)
       }
   })

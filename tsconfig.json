@@ -2,6 +2,9 @@
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "exclude": ["src/**/__tests__/*"],
   "files": [],
+  "compilerOptions": {
+    "lib": ["es2016"],
+  },
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { RouteRecordRaw } from 'vue-router'
 import cache from '@/plugins/cache'
-const powerList = ['/','/about','/addDept','/deptList','/game']
+const powerList = ['/','/about','/addDept','/deptList','/game', '/map']
 export const PublicStore = defineStore('Public', () => {
     const power: Array<string> = cache.session.getJSON('power') || []
     const navList = cache.session.getJSON('navList') || []
