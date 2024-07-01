@@ -10,13 +10,13 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 // 注册指令
 import plugins from './plugins' // plugins
-import { download } from '@/utils/request'
+// import { download } from './utils/request'
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 // 全局方法挂载
-app.config.globalProperties.download = download
+// app.config.globalProperties.download = download
 
 app.use(createPinia())
 app.use(router)

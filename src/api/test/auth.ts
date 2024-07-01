@@ -1,18 +1,14 @@
-import request from '@/utils/request'
+import request from '../../utils/request'
+import { ResponseModel } from '../../utils/requestType'
+enum API {
+  login = '/auth/login',
+  register = '/user/register'
+}
 
-export const userLogin = (data) => {
-  return request({
-    url: '/auth/login',
-    method: 'post',
-    data: data
-  })
+export const userLogin = (data: any) => {
+  return request.post<ResponseModel>({ url: API.login, data: data })
 }
 
 export const register = (data) => {
-  return request({
-    url: '/user/register',
-    method: 'post',
-    data: data
-  })
+  return request.post<ResponseModel>({ url: API.register, data: data })
 }
-

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { getToken } from '@/utils/auth'
+import { getToken } from '../utils/auth'
 import { PublicStore } from '@/stores/Public';
 import HomeView from '../views/HomeView.vue'
 const routesList: RouteRecordRaw[] = [

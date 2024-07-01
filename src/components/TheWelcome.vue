@@ -51,7 +51,8 @@ const columns = [
   { key: 'desc', title: 'Desc', dataKey: 'desc', width: 400 },
   { key: 'createDate', title: 'CreateTime', dataKey: 'createDate', width: 150 },
   { key: 'Operations', title: ' ', dataKey: 'Operations', width: 70, align: 'center',
-    cellRenderer: ({ rowData }) => {
+    cellRenderer: (data) => {
+      const rowData = data.rowData
       const onClick = () => {
         removeStudent(rowData.id).then(res => {
           if (res.code == 0) {
@@ -70,7 +71,9 @@ columns.forEach(item => {
   if (!['createDate', 'Operations'].includes(item.dataKey)) {
     item[`${item.dataKey}Editing`] = false
     item[`${item.dataKey}Change`] = false
-    item['cellRenderer'] = ({ rowData, column }) => {
+    item['cellRenderer'] = (data) => {
+      const rowData = data.rowData
+      const column = data?.column
       const onChange = (value: string) => {
         rowData[`${column.dataKey}Change`] = true
         rowData[column.dataKey!] = value

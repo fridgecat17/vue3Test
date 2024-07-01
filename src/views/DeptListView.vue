@@ -68,7 +68,7 @@ const columns = [
     dataKey: 'Operations',
     width: 90,
     align: 'center',
-    cellRenderer: ({ rowData }) => {
+    cellRenderer: ({ rowData, column }) => {
       const onClick = () => {
         removeClass(rowData.id).then((res) => {
           if (res.code == 0) {

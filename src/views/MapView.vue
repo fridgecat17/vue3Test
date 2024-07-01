@@ -5,8 +5,8 @@
 import { onMounted, onUnmounted } from "vue"
 import AMapLoader from '@amap/amap-jsapi-loader'
 
-let map = null
-window._AMapSecurityConfig = {
+let map = null;
+(window as any)._AMapSecurityConfig = {
   securityJsCode: '6b2536c0ef1b7c2d963c0cef2553f1bd'
 }
 onMounted(() => {
