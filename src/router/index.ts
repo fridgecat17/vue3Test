@@ -85,7 +85,8 @@ const getRoutesAuth = (power:Array<string>) => { // 添加路由
 };
 router.beforeEach(async(to, from, next) => {
   if (to.path !== '/login' && !getToken()) { // 判断是否登录  非`login`页面无`token`的话跳转到登录页面
-      next({ path: '/login' });
+    console.log('未登录')  
+    next({ path: '/login' });
   } else {
     const stores = PublicStore() // pinia 状态管理
     if (to.path !== '/login') {
@@ -116,6 +117,8 @@ router.beforeEach(async(to, from, next) => {
           }
         }
       }
+    } else {
+      next()
     }
   }
 })

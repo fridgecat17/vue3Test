@@ -111,7 +111,7 @@ columns.forEach((item) => {
         updateClass(query, rowData.id).then(() => {
           rowData[`${column.dataKey}Change`] = false
           rowData[`${column.dataKey}Editing`] = false
-          // getTableData()
+          getTableData()
         })
       }
       const input = ref()
