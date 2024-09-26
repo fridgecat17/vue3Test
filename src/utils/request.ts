@@ -4,7 +4,6 @@ import axios, {
   AxiosRequestConfig,
   AxiosError,
   AxiosResponse,
-  AxiosStatic
 } from 'axios'
 import { ElNotification, ElMessageBox, ElMessage, ElLoading } from 'element-plus'
 import { getToken } from '@/utils/auth'
@@ -17,7 +16,7 @@ import { ResponseModel } from './requestType'
 
 let downloadLoadingInstance: ReturnType<typeof ElLoading.service>
 // 是否显示重新登录
-export const isRelogin = { show: false }
+export const isReLogin = { show: false }
 
 class Service {
   service: AxiosInstance
@@ -26,6 +25,7 @@ class Service {
     // 创建axios实例
     this.service = axios.create({
       // axios中请求配置有baseURL选项，表示请求URL公共部分
+      // @ts-ignore
       baseURL: import.meta.env.VITE_APP_BASE_API,
       // 超时
       timeout: 10000
@@ -34,11 +34,11 @@ class Service {
     this.service.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         // 是否需要设置 token
-        const isToken = config.headers.isToken
+        const noToken = config.headers.noToken
         // 是否需要防止数据重复提交
         const isRepeatSubmit = config.headers.repeatSubmit === false
         console.log(getToken())
-        if (getToken() && isToken) {
+        if (getToken() && !noToken) {
           config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
         }
         // get请求映射params参数
@@ -91,7 +91,7 @@ class Service {
       },
       {
         synchronous: false,
-        runWhen: (config: InternalAxiosRequestConfig) => {
+        runWhen: () => {
           return true
         }
       }
@@ -108,21 +108,21 @@ class Service {
           return res.data
         }
         if (code === 401) {
-          if (!isRelogin.show) {
-            isRelogin.show = true
+          if (!isReLogin.show) {
+            isReLogin.show = true
             ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
               confirmButtonText: '重新登录',
               cancelButtonText: '取消',
               type: 'warning'
             })
               .then(() => {
-                isRelogin.show = false
+                isReLogin.show = false
                 // useUserStore().logOut().then(() => {
                 //   location.href = '/index';
                 // })
               })
               .catch(() => {
-                isRelogin.show = false
+                isReLogin.show = false
               })
           }
           return Promise.reject('无效的会话，或者会话已过期，请重新登录。')

@@ -50,7 +50,7 @@ const rules = reactive<FormRules<RuleForm>>({
 
 const submitForm = async (formEl: FormInstance | undefined, type: number) => {
   if (!formEl) return
-  await formEl.validate((valid, fields) => {
+  await formEl.validate((valid) => {
     if (valid) {
       const query = {
         username: ruleForm.username,
@@ -70,6 +70,11 @@ const submitForm = async (formEl: FormInstance | undefined, type: number) => {
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
+}
+</script>
+<script>
+export default {
+  name: 'LoginView',
 }
 </script>
 <style>

@@ -6,9 +6,9 @@ enum API {
 }
 
 export const userLogin = (data: any) => {
-  return request.post<ResponseModel>({ url: API.login, data: data })
+  return request.post<ResponseModel>({ url: API.login, data: data, headers: { noToken: true } })
 }
 
 export const register = (data) => {
-  return request.post<ResponseModel>({ url: API.register, data: data })
+  return request.post<ResponseModel>({ url: API.register, data: data, headers: { noToken: true } })
 }

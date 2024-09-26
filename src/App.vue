@@ -11,7 +11,7 @@
 </template>
 <script lang="ts" setup>
 import { RouterLink, RouterView } from 'vue-router'
-import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { PublicStore } from './stores/Public';
 const stores = PublicStore()
 const navList = computed(() => {
