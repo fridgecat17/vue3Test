@@ -72,7 +72,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields()
 }
 </script>
-<script>
+<script lang="ts">
 export default {
   name: 'LoginView',
 }

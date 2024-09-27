@@ -183,9 +183,9 @@ const onScroll = ({ scrollTop }) => {
 const getTableData = () => {
   getClassList({
     name: '',
+    pageType: 1,
     current: currentPage.value,
     size: pageSize.value,
-    pageType: 1
   }).then((res) => {
     if (res.code == 0) {
       data.value = res.data.list.map((item) => {

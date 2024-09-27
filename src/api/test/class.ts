@@ -6,7 +6,7 @@ enum API {
   class = '/class/'
 }
 export const getClassList = (data: any) => {
-  return request.get<listModel>({ url: API.getClassList, data: data })
+  return request.get<listModel>({ url: API.getClassList, params: data })
 }
 
 export const setClass = (data: any) => {
