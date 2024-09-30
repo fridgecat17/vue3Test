@@ -20,11 +20,12 @@ type SelectionCellProps = {
   value: string
   intermediate?: boolean
   onChange: (value: string) => void
+  onBlur: () => void
   forwardRef: (el: InputInstance) => void
 }
 
-const InputCell: FunctionalComponent<SelectionCellProps> = ({ value, onChange, forwardRef }) => {
-  return <ElInput ref={forwardRef as any} onInput={onChange} modelValue={value} />
+const InputCell: FunctionalComponent<SelectionCellProps> = ({ value, onChange, onBlur, forwardRef }) => {
+  return <ElInput ref={forwardRef as any} onInput={onChange} onBlur={onBlur} modelValue={value} />
 }
 const userList = ref([])
 const getUserData = () => {
@@ -62,7 +63,6 @@ const columns = [
       }
       return (
         <div class="flex items-center">
-          <i class="i-iconamoon:question-mark-circle-bold text-30px c-red" />
           <ElButton size="small" type="danger" icon={'Delete'} onClick={onClick} />
         </div>
       )
@@ -131,7 +131,6 @@ columns.forEach((item) => {
             value={rowData[column.dataKey!]}
             onChange={onChange}
             onBlur={onExitEditMode}
-            onKeydownEnter={onExitEditMode}
           />
         )
       ) : (
