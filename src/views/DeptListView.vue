@@ -1,27 +1,10 @@
 <template>
-  <el-table-v2
-    :columns="columns"
-    :data="tableData"
-    :fixed-data="fixedData"
-    :width="1000"
-    :height="400"
-    :row-class="rowClass"
-    fixed
-    @scroll="onScroll"
-  />
-  <el-pagination
-    v-if="tableData.length > 0"
-    v-model:current-page="currentPage"
-    v-model:page-size="pageSize"
-    :page-sizes="[10, 20, 50, 100]"
-    :small="true"
-    :background="false"
-    :total="total"
-    layout="prev,pager,next,sizes,total"
-    class="pagination"
-    @size-change="handleSizeChange"
-    @current-change="handleCurrentChange"
-  />
+  <el-table-v2 :columns="columns" :data="tableData" :fixed-data="fixedData" :width="1000" :height="400"
+    :row-class="rowClass" fixed @scroll="onScroll" />
+  <el-pagination v-if="tableData.length > 0" v-model:current-page="currentPage" v-model:page-size="pageSize"
+    :page-sizes="[10, 20, 50, 100]" :small="true" :background="false" :total="total"
+    layout="prev,pager,next,sizes,total" class="pagination" @size-change="handleSizeChange"
+    @current-change="handleCurrentChange" />
 </template>
 
 <script lang="tsx" setup>
@@ -77,7 +60,12 @@ const columns = [
           }
         })
       }
-      return <ElButton size="small" type="danger" icon={'Delete'} onClick={onClick}/>
+      return (
+        <div class="flex items-center">
+          <i class="i-iconamoon:question-mark-circle-bold text-30px c-red" />
+          <ElButton size="small" type="danger" icon={'Delete'} onClick={onClick} />
+        </div>
+      )
     }
   }
 ]
@@ -212,6 +200,7 @@ getTableData()
   background-color: var(--el-color-primary-light-5);
   font-weight: bold;
 }
+
 .pagination {
   margin-top: 10px;
   display: flex;

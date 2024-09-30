@@ -8,6 +8,7 @@ import router from './router'
 import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
+import 'virtual:uno.css'
 // 注册指令
 import plugins from './plugins' // plugins
 // import { download } from './utils/request'

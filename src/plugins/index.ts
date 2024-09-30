@@ -1,11 +1,11 @@
 import cache from './cache'
 import modal from './modal'
 import download from './download'
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   interface ComponentCustomProperties {
-      $modal: any; // 这里填类型
+      $modal: typeof modal;
       $cache: any;
-      $download: any;
+      $download: typeof download;
   }
 }
 export default function installPlugins(app) {
