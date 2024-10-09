@@ -8,8 +8,8 @@
   </header>
 
   <RouterView />
-  <div>
-    <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44010602013135" target="_blank">粤公网安备44010602013135号</a>
+  <div class="flex items-center gap-15px">
+    <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44010602013135" target="_blank">粤公网安备 44010602013135</a>
     <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2024315700号</a>
   </div>
 </template>
