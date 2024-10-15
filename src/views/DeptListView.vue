@@ -1,5 +1,5 @@
 <template>
-  <el-table-v2 :columns="columns" :data="tableData" :fixed-data="fixedData" :width="1000" :height="400"
+  <el-table-v2 :columns="columns" :data="tableData" :fixed-data="fixedData" :width="1000" :height="700"
     :row-class="rowClass" fixed @scroll="onScroll" />
   <el-pagination v-if="tableData.length > 0" v-model:current-page="currentPage" v-model:page-size="pageSize"
     :page-sizes="[10, 20, 50, 100]" :small="true" :background="false" :total="total"

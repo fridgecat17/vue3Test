@@ -18,12 +18,12 @@ const routesList: RouteRecordRaw[] = [
     component: HomeView
   },
   {
-    path: '/about',
-    name: 'about',
+    path: '/addUser',
+    name: 'addUser',
     meta: {
       title:'CREATEUSER',
     },
-    component: () => import('../views/AboutView.vue')
+    component: () => import('../views/AddUser.vue')
   },
   {
     path: '/addDept',

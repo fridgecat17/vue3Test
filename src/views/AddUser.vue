@@ -89,10 +89,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
 @media (min-width: 1024px) {
   .about {
     width: 1000px;
-    height: 434px;
+    height: 700px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
   }
 }
 </style>
